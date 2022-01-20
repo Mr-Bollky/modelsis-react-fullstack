@@ -128,9 +128,9 @@ class Login extends Component {
                             name="email"
                             label="Email"
                             id="email"
-                            className="form-control"
+                            // className="form-control"
                             placeholder="Enter your email"
-                            type="email"
+                            // type="email"
                             required
                           />
                         </div>
