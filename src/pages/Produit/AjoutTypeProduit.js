@@ -55,19 +55,23 @@ class AjoutProduit extends Component {
 
   handleCreer=()=>{
 
-
     var date=new Date();
 
     $("#initial").hide()
     $("#chargement").show()
 
     var data= {
-      "nom": $("#nom").val(), 
-      "type_id":$("#type_id option:selected").val(),
+      "name": $("#nom").val(),
     }
-    console.log("donnee transmises:",data)
+    // console.log("donnee transmises:",data)
 
-    if(($("#nom").val()=="") || ($("#type_id option:selected").val()=="0") ){
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json','Accept': 'application/json'},
+      body: JSON.stringify(data)
+    };
+
+    if(($("#nom").val()=="")){
       $("#initial").show()
       $("#chargement").hide()
       this.setState({message:"Please fill in the required fields !"})
@@ -75,21 +79,29 @@ class AjoutProduit extends Component {
       this.setState({show:true,success:false});
     }
     else{
-      postQueries("utilisateurs",data).then(e=>{
-        if(e){
-          $("#initial").show()
-          $("#chargement").hide()
-          this.setState({message:"Product add with success !"})
-          this.setState({show:true,success:true});
-          }else{
-          $("#initial").show()
-          $("#chargement").hide()
-          this.setState({message:"An error occured. Please try again !"})
-          this.setState({show:true,success:false});
-        }
-      })
+      fetch(url+"productType",requestOptions)
+        .then((response) => response.json())
+          .then((data) => {
+            console.log("okkk====>",data)
+            try{
+              if(data.id){
+                $("#chargement").hide()
+                alert("Prouct add with success")
+                this.setState({ok: <Redirect to='/ajout-produit'  />});
+              }else{
+                $("#chargement").hide()
+                this.setState({message:"An error occured, please try again !"})
+                $("#echecSauv").show()
+              }
+            }catch(err){
+              $("#chargement").hide()
+              this.setState({message:"An error occured, please try again !"})
+              $("#echecSauv").show()
+            }
+          });
     }
   }
+
 
   handleValidate=()=>{
     if(this.state.success){
@@ -97,7 +109,6 @@ class AjoutProduit extends Component {
     }else{
       this.setState({show:false})
     }
-    
   }
 
   handleAnnuler=()=>{

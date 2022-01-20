@@ -1,2 +1,3 @@
-const url="http://localhost:3000/"
+// const url="http://localhost:8080/"
+const url="https://cedric-backend.herokuapp.com/"
 export default url
