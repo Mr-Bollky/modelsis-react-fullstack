@@ -92,23 +92,23 @@ class Layout extends Component {
             </div>
           </div>
           <div id="layout-wrapper">
-            <Header
+            {/* <Header
               theme={this.props.topbarTheme}
               isMenuOpened={this.state.isMenuOpened}
               toggleRightSidebar={this.toggleRightSidebar}
               openLeftMenuCallBack={this.openMenu}
-            />
-            <Navbar menuOpen={this.state.isMenuOpened} />
+            /> */}
+            {/* <Navbar menuOpen={this.state.isMenuOpened} /> */}
             <div className="main-content">{this.props.children}</div>
-            <Footer />
+            {/* <Footer /> */}
           </div>
-          <Rightbar />
+          {/* <Rightbar /> */}
         </I18nextProvider>
       </React.Fragment>
     )
   }
 }
-
+ 
 Layout.propTypes = {
   changeLayout: PropTypes.func,
   changeLayoutWidth: PropTypes.func,
