@@ -28,6 +28,8 @@ Installer [NodeJs](https://nodejs.org/en/download/).
 
 ## Execution
 Votre apllication va se lancer sur votre navigateur par défaut à l'adresse suivante : `http://localhost:3000/#/` 
+
+## API
 Connexion à l'API : http://localhost:8080/
 
 ## Connexion
