@@ -65,7 +65,7 @@ class ListeProduit extends Component {
     fetch(url+"products")
       .then((response) => response.json())
         .then((data) => {
-          console.log("data", data)
+          // console.log("data", data)
           this.setState({produitData:data,chargement:true})
 
           data.map((element,idx) =>{
@@ -136,7 +136,7 @@ class ListeProduit extends Component {
         <div className="page-content"> {this.state.ok}
            
           <MetaTags>
-            <title >Liste des experts</title>
+            <title >Product list</title>
           </MetaTags>
 
           <Container fluid={true}>

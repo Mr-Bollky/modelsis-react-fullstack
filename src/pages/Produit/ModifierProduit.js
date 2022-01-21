@@ -46,7 +46,8 @@ class ModifierProduit extends Component {
       errors: {},
       message:"",
       idProduit: localStorage.getItem("idProduit"),
-      updatedAt:""
+      updatedAt:"",
+      dateDeCreation:"",
     }
   }
 
@@ -57,24 +58,25 @@ class ModifierProduit extends Component {
     $("#valideFile").hide()
 
     var id = this.state.idProduit
-    console.log("id produit",id);
+    // console.log("id produit",id);
     fetch(url+"products/"+id)
     .then((response) => response.json())
     .then((data) => {
-      console.log("data produit",data);
+      // console.log("data produit",data);
       $("#nom").val(data.name);
+      this.setState({dateDeCreation:data.dateCreated})
     })
 
     fetch(url+"productTypes")
     .then((response) => response.json())
     .then((data) => {
-      console.log("data types de produit",data);
+      // console.log("data types de produit",data);
       this.setState({typeproduit:data})
     })
 
   }
 
-  handleCreer=()=>{
+  handleModifier=()=>{
 
     $("#initial").hide()
     $("#chargement").show()
@@ -83,14 +85,19 @@ class ModifierProduit extends Component {
       "id":this.state.idProduit,
       "name":$("#nom").val(), 
       "type":$("#type_id option:selected").val(),
+      "dateCreated":this.state.dateDeCreation
     }
 
-    console.log("donnee transmises:",data)
+    // console.log("donnee transmises:",data)
 
     const requestOptions = {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json','Accept': 'application/json'},
+      headers: { 'Content-Type': 'application/json','Accept': 'application/json','Access-Control-Allow-Origin':'*'},
       body: JSON.stringify(data)
+    };
+    const requestOptions2 = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json','Accept': 'application/json','Access-Control-Allow-Origin':'*'},
     };
 
     if(($("#nom").val()=="") || ($("#type_id option:selected").val()=="0") ){
@@ -105,47 +112,68 @@ class ModifierProduit extends Component {
       // axios.put(url+'products', data)
       // .then(response => this.setState({ updatedAt: response.data.updatedAt }));
 
-      // axios.put(url+"products",data)
-      // .then((response) => response.json())
-      //   .then((data) => {
-      //     console.log("okkk====>",data)
-      //     try{
-      //       if(data.id){
-      //         $("#chargement").hide()
-      //         alert("Ajouté avec success")
-      //         this.setState({ok: <Redirect to='/liste-produit'  />});
-      //       }else{
-      //         $("#chargement").hide()
-      //         this.setState({message:"An error occured, please try again !"})
-      //         $("#echecSauv").show()
-      //       }
-      //     }catch(err){
-      //       $("#chargement").hide()
-      //       this.setState({message:"An error occured, please try again !"})
-      //       $("#echecSauv").show()
-      //     }
-      //   });
-
-      axios.put(url+"products",data)
-        .then((response) => response.json())
-          .then((data) => {
-            console.log("okkk====>",data)
-            try{
-              if(data.id){
-                $("#chargement").hide()
-                alert("Ajouté avec success")
-                this.setState({ok: <Redirect to='/liste-produit'  />});
-              }else{
-                $("#chargement").hide()
-                this.setState({message:"An error occured, please try again !"})
-                $("#echecSauv").show()
-              }
-            }catch(err){
+      axios.put(url+"products",data,requestOptions2)
+      .then((response) => response.json())
+        .then((data) => {
+          console.log("okkk====>",data)
+          try{
+            if(data.id){
+              $("#chargement").hide()
+              alert("Ajouté avec success")
+              this.setState({ok: <Redirect to='/liste-produit'  />});
+            }else{
               $("#chargement").hide()
               this.setState({message:"An error occured, please try again !"})
               $("#echecSauv").show()
             }
-          });
+          }catch(err){
+            $("#chargement").hide()
+            this.setState({message:"An error occured, please try again !"})
+            $("#echecSauv").show()
+          }
+        });
+
+      // fetch(url+"products",requestOptions)
+      // .then(response => response.json())
+      // .then(data =>{
+      //   console.log("data login:",data)
+      //   try{
+      //     if(data.id){
+      //       $("#chargement").hide()
+      //       alert("Ajouté avec success")
+      //       this.setState({ok: <Redirect to='/liste-produit'  />});
+      //     }else{
+      //       $("#chargement").hide()
+      //       this.setState({message:"An error occured, please try again !"})
+      //       $("#echecSauv").show()
+      //     }
+      //   }catch(err){
+      //     $("#chargement").hide()
+      //     this.setState({message:"An error occured, please try again !"})
+      //     $("#echecSauv").show()
+      //   }
+      // })
+
+      // axios.patch(url+"products",data)
+      //   .then((response) => response.json())
+      //     .then((data) => {
+      //       // console.log("okkk====>",data)
+      //       try{
+      //         if(data.id){
+      //           $("#chargement").hide()
+      //           alert("Ajouté avec success")
+      //           this.setState({ok: <Redirect to='/liste-produit'  />});
+      //         }else{
+      //           $("#chargement").hide()
+      //           this.setState({message:"An error occured, please try again !"})
+      //           $("#echecSauv").show()
+      //         }
+      //       }catch(err){
+      //         $("#chargement").hide()
+      //         this.setState({message:"An error occured, please try again !"})
+      //         $("#echecSauv").show()
+      //       }
+      //     });
     }
   }
 
@@ -193,7 +221,7 @@ class ModifierProduit extends Component {
         <div className="page-content">   {this.state.ok}
 
         <MetaTags>
-            <title>Add a new product</title>
+            <title>Change the product</title>
         </MetaTags>
         <Container fluid={true}>
             
@@ -240,7 +268,7 @@ class ModifierProduit extends Component {
               <Col md="6">
                 <Button style={{backgroundColor:"#aad29a", borderColor:"#aad29a",float:"right",borderRadius:"10px"}} id="initial" color="success"
 
-                  onClick={this.handleCreer}
+                  onClick={this.handleModifier}
                 >
                   Update the product
                 </Button>

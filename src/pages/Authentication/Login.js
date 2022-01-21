@@ -13,6 +13,7 @@ import { apiError, loginUser, socialLogin } from "../../store/actions"
 import  { Redirect } from 'react-router-dom'
 import $ from "jquery";
 import url from "../../common/api"
+import axios from 'axios';
 
 class Login extends Component {
   constructor(props) {
@@ -33,33 +34,46 @@ class Login extends Component {
     }
     const requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json','Accept': 'application/json' },
-      body: JSON.stringify({"email":$("#email").val(),"password":$("#password").val()})
+      headers: { 'Content-Type': 'application/json','Accept': 'application/json'},
+      body: JSON.stringify({"login":$("#email").val(),"password":$("#password").val()})
     };
+
+    const data = {
+      "login": $("#email").val(),
+      "password":$("#password").val()
+    }
     
+    // axios.post(url+"user/login",requestOptions)
+    // .then((response) => {
+    //   console.log("okkk====>",response.data)
+    // })
   
     fetch(url+'user/login',requestOptions)
       .then(response => response.json())
-      .then(data =>{console.log("data login:",data)
-  
-      if(data.length>0){
-        $("#btn-charge").css("display","none")
-        $("#btn-connexion").css("display","block")
-        $("#echecAuth").css("display","none")
-        localStorage.setItem("authAshia", JSON.stringify(data[0]))
-        if(data[0].status=="DESACTIVE"){
-          this.setState({message:"Votre compte est suspendu;veuillez contacter votre administrateur"})
+      .then(data =>{
+      // console.log("data login:",data)
+      if(data==null){
+        $("#echecAuth").css("display","block")
+        this.setState({ok: <Redirect to='/login'  />});
+      }
+      try{
+      
+        if(data.id){
+          $("#btn-charge").css("display","none")
+          $("#btn-connexion").css("display","block")
+          $("#echecAuth").css("display","none")
+          localStorage.setItem("authAshia", JSON.stringify(data[0]))
+          this.setState({ok: <Redirect to='/liste-produit'  />});
+        }else{
           $("#btn-charge").css("display","none")
           $("#btn-connexion").css("display","block")
           $("#echecAuth").css("display","block")
-        }else{
-          this.setState({ok: <Redirect to='/accueil'  />})
         }
-      }else{
-        $("#btn-charge").css("display","none")
-        $("#btn-connexion").css("display","block")
-        $("#echecAuth").css("display","block")
+      }catch(error){
+        this.setState({ok: <Redirect to='/liste-produit'  />});
       }
+
+      
     })
   }
   

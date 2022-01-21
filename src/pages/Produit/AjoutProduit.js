@@ -55,7 +55,7 @@ class AjoutProduit extends Component {
     fetch(url+"productTypes")
       .then((response) => response.json())
         .then((data) => {
-          console.log("data",data);
+          // console.log("data",data);
           this.setState({typeproduit:data})
         })
   }
@@ -70,7 +70,7 @@ class AjoutProduit extends Component {
       "type":$("#type_id option:selected").val(),
       "dateCreated": new Date(),
     }
-    console.log("donnee transmises:",data)
+    // console.log("donnee transmises:",data)
 
     const requestOptions = {
       method: 'POST',
@@ -89,7 +89,7 @@ class AjoutProduit extends Component {
       fetch(url+"products",requestOptions)
         .then((response) => response.json())
           .then((data) => {
-            console.log("okkk====>",data)
+            // console.log("okkk====>",data)
             try{
               if(data.id){
                 $("#chargement").hide()

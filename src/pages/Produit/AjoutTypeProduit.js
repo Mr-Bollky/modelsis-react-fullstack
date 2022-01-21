@@ -82,7 +82,7 @@ class AjoutProduit extends Component {
       fetch(url+"productType",requestOptions)
         .then((response) => response.json())
           .then((data) => {
-            console.log("okkk====>",data)
+            // console.log("okkk====>",data)
             try{
               if(data.id){
                 $("#chargement").hide()
