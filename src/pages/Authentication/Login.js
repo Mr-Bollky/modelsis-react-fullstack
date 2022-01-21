@@ -6,42 +6,82 @@ import { Alert, Card, CardBody, Col, Container, Row } from "reactstrap"
 // Redux
 import { connect } from "react-redux"
 import { Link, withRouter } from "react-router-dom"
-
-//Social Media Imports
-import { GoogleLogin } from "react-google-login"
-// import TwitterLogin from "react-twitter-auth"
-import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props"
-
-//Import config
-import { facebook, google } from "../../config"
-
-// availity-reactstrap-validation
 import { AvField, AvForm } from "availity-reactstrap-validation"
 
 // actions
 import { apiError, loginUser, socialLogin } from "../../store/actions"
-
-// import images
-import profile from "../../assets/images/profile-img.png"
-import logo from "../../assets/images/logo.svg"
-import lightlogo from "../../assets/images/logo-light.svg"
+import  { Redirect } from 'react-router-dom'
+import $ from "jquery";
+import url from "../../common/api"
+import axios from 'axios';
 
 class Login extends Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      ok:"",
+      message:"Incorect login or password !"
+    }
 
-    // handleValidSubmit
-    this.handleValidSubmit = this.handleValidSubmit.bind(this)
+  this.handleValidSubmit.bind(this)
   }
 
-  // handleValidSubmit
-  handleValidSubmit(event, values) {
-    this.props.loginUser(values, this.props.history)
-  }
+  handleValidSubmit=() =>{
+    this.setState({message:"Incorect login or password !"})
+    if($("#email").val()!="" && $("#password").val()!="" ){
+        $("#btn-charge").css("display","block")
+        $("#btn-connexion").css("display","none")
+    }
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json','Accept': 'application/json'},
+      body: JSON.stringify({"login":$("#email").val(),"password":$("#password").val()})
+    };
 
+    const data = {
+      "login": $("#email").val(),
+      "password":$("#password").val()
+    }
+    
+    // axios.post(url+"user/login",requestOptions)
+    // .then((response) => {
+    //   console.log("okkk====>",response.data)
+    // })
+  
+    fetch(url+'user/login',requestOptions)
+      .then(response => response.json())
+      .then(data =>{
+      // console.log("data login:",data)
+      if(data==null){
+        $("#echecAuth").css("display","block")
+        this.setState({ok: <Redirect to='/login'  />});
+      }
+      try{
+      
+        if(data.id){
+          $("#btn-charge").css("display","none")
+          $("#btn-connexion").css("display","block")
+          $("#echecAuth").css("display","none")
+          localStorage.setItem("authAshia", JSON.stringify(data[0]))
+          this.setState({ok: <Redirect to='/liste-produit'  />});
+        }else{
+          $("#btn-charge").css("display","none")
+          $("#btn-connexion").css("display","block")
+          $("#echecAuth").css("display","block")
+        }
+      }catch(error){
+        this.setState({ok: <Redirect to='/liste-produit'  />});
+      }
+
+      
+    })
+  }
+  
   componentDidMount() {
     this.props.apiError("")
+    $("#echecAuth").css("display","none")
+    $("#btn-charge").css("display","none")
+
   }
 
   signIn = (res, type) => {
@@ -80,61 +120,18 @@ class Login extends Component {
 
   render() {
     return (
-      <React.Fragment>
-        <div className="home-btn d-none d-sm-block">
-          <Link to="/" className="text-dark">
-            <i className="bx bx-home h2" />
-          </Link>
-        </div>
+      <React.Fragment> {this.state.ok}
         <div className="account-pages my-5 pt-sm-5">
           <Container>
             <Row className="justify-content-center">
               <Col md={8} lg={6} xl={5}>
                 <Card className="overflow-hidden">
-                  <div className="bg-primary bg-soft">
-                    <Row>
-                      <Col className="col-7">
-                        <div className="text-primary p-4">
-                          <h5 className="text-primary">Welcome Back !</h5>
-                          <p>Sign in to continue to Skote.</p>
-                        </div>
-                      </Col>
-                      <Col className="col-5 align-self-end">
-                        <img src={profile} alt="" className="img-fluid" />
-                      </Col>
-                    </Row>
-                  </div>
+
                   <CardBody className="pt-0">
-                    <div className="auth-logo">
-                      <Link to="/" className="auth-logo-light">
-                        <div className="avatar-md profile-user-wid mb-4">
-                          <span className="avatar-title rounded-circle bg-light">
-                            <img
-                              src={lightlogo}
-                              alt=""
-                              className="rounded-circle"
-                              height="34"
-                            />
-                          </span>
-                        </div>
-                      </Link>
-                      <Link to="/" className="auth-logo-dark">
-                        <div className="avatar-md profile-user-wid mb-4">
-                          <span className="avatar-title rounded-circle bg-light">
-                            <img
-                              src={logo}
-                              alt=""
-                              className="rounded-circle"
-                              height="34"
-                            />
-                          </span>
-                        </div>
-                      </Link>
-                    </div>
+                    
                     <div className="p-2">
                       <AvForm
                         className="form-horizontal"
-                        onValidSubmit={this.handleValidSubmit}
                       >
                         {this.props.error && this.props.error ? (
                           <Alert color="danger">{this.props.error}</Alert>
@@ -144,10 +141,10 @@ class Login extends Component {
                           <AvField
                             name="email"
                             label="Email"
-                            value="admin@themesbrand.com"
-                            className="form-control"
-                            placeholder="Enter email"
-                            type="email"
+                            id="email"
+                            // className="form-control"
+                            placeholder="Enter your email"
+                            // type="email"
                             required
                           />
                         </div>
@@ -156,101 +153,40 @@ class Login extends Component {
                           <AvField
                             name="password"
                             label="Password"
-                            value="123456"
+                            id="password"
                             type="password"
                             required
-                            placeholder="Enter Password"
+                            placeholder="Enter your password"
                           />
-                        </div>
-
-                        <div className="form-check">
-                          <input
-                            type="checkbox"
-                            className="form-check-input"
-                            id="customControlInline"
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="customControlInline"
-                          >
-                            Remember me
-                          </label>
                         </div>
 
                         <div className="mt-3 d-grid">
                           <button
-                            className="btn btn-primary btn-block waves-effect waves-light"
-                            type="submit"
+                            className="btn btn-info btn-block waves-effect waves-light"
+                            onClick={this.handleValidSubmit}
+                            style={{backgroundColor:"#5FC4E1"}}
+                            id="btn-connexion"
                           >
-                            Log In
+                            Se connecter
                           </button>
-                        </div>
-
-                        <div className="mt-4 text-center">
-                          <h5 className="font-size-14 mb-3">Sign in with</h5>
-
-                          <ul className="list-inline">
-                            <li className="list-inline-item">
-                              <FacebookLogin
-                                appId={facebook.APP_ID}
-                                autoLoad={false}
-                                callback={this.facebookResponse}
-                                render={renderProps => (
-                                  <Link
-                                    to={""}
-                                    className="social-list-item bg-primary text-white border-primary"
-                                  // onClick={renderProps.onClick}
-                                  >
-                                    <i className="mdi mdi-facebook" />
-                                  </Link>
-                                )}
-                              />
-                            </li>
-                            <li className="list-inline-item">
-                              <GoogleLogin
-                                clientId={google.CLIENT_ID}
-                                render={renderProps => (
-                                  <Link
-                                    to={""}
-                                    className="social-list-item bg-danger text-white border-danger"
-                                  // onClick={renderProps.onClick}
-                                  >
-                                    <i className="mdi mdi-google" />
-                                  </Link>
-                                )}
-                                onSuccess={this.googleResponse}
-                                onFailure={() => { }}
-                              />
-                            </li>
-                          </ul>
-                        </div>
-
-                        <div className="mt-4 text-center">
-                          <Link to="/forgot-password" className="text-muted">
-                            <i className="mdi mdi-lock me-1" /> Forgot your
-                            password?
-                          </Link>
+                          <button
+                            className="btn btn-info btn-block waves-effect waves-light"
+                            disabled
+                            id="btn-charge"
+                          >
+                            <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"> </span>
+                         
+                          </button>
                         </div>
                       </AvForm>
                     </div>
+                    <div>
+                    <div id="echecAuth" class="alert alert-danger" role="alert">
+                      {this.state.message}
+                    </div>
+                    </div>
                   </CardBody>
                 </Card>
-                <div className="mt-5 text-center">
-                  <p>
-                    Don't have an account ?{" "}
-                    <Link
-                      to="register"
-                      className="fw-medium text-primary"
-                    >
-                      {" "}
-                      Signup now{" "}
-                    </Link>{" "}
-                  </p>
-                  <p>
-                    © {new Date().getFullYear()} Skote. Crafted with{" "}
-                    <i className="mdi mdi-heart text-danger" /> by Themesbrand
-                  </p>
-                </div>
               </Col>
             </Row>
           </Container>

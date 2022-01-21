@@ -45,6 +45,9 @@ class ModifierProduit extends Component {
       input: {},
       errors: {},
       message:"",
+      idProduit: localStorage.getItem("idProduit"),
+      updatedAt:"",
+      dateDeCreation:"",
     }
   }
 
@@ -53,21 +56,49 @@ class ModifierProduit extends Component {
     $("#echecSauv").hide()
     $("#profile").hide()
     $("#valideFile").hide()
+
+    var id = this.state.idProduit
+    // console.log("id produit",id);
+    fetch(url+"products/"+id)
+    .then((response) => response.json())
+    .then((data) => {
+      // console.log("data produit",data);
+      $("#nom").val(data.name);
+      this.setState({dateDeCreation:data.dateCreated})
+    })
+
+    fetch(url+"productTypes")
+    .then((response) => response.json())
+    .then((data) => {
+      // console.log("data types de produit",data);
+      this.setState({typeproduit:data})
+    })
+
   }
 
-  handleCreer=()=>{
-
-
-    var date=new Date();
+  handleModifier=()=>{
 
     $("#initial").hide()
     $("#chargement").show()
 
     var data= {
-      "nom": $("#nom").val(), 
-      "type_id":$("#type_id option:selected").val(),
+      "id":this.state.idProduit,
+      "name":$("#nom").val(), 
+      "type":$("#type_id option:selected").val(),
+      "dateCreated":this.state.dateDeCreation
     }
-    console.log("donnee transmises:",data)
+
+    // console.log("donnee transmises:",data)
+
+    const requestOptions = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json','Accept': 'application/json','Access-Control-Allow-Origin':'*'},
+      body: JSON.stringify(data)
+    };
+    const requestOptions2 = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json','Accept': 'application/json','Access-Control-Allow-Origin':'*'},
+    };
 
     if(($("#nom").val()=="") || ($("#type_id option:selected").val()=="0") ){
       $("#initial").show()
@@ -77,23 +108,74 @@ class ModifierProduit extends Component {
       this.setState({show:true,success:false});
     }
     else{
-      postQueries("utilisateurs",data).then(e=>{
-        if(e){
-          $("#initial").show()
-          $("#chargement").hide()
-          this.setState({message:"Product add with success !"})
-          this.setState({show:true,success:true});
-          }else{
-          $("#initial").show()
-          $("#chargement").hide()
-          this.setState({message:"An error occured. Please try again !"})
-          this.setState({show:true,success:false});
-        }
-      })
+
+      // axios.put(url+'products', data)
+      // .then(response => this.setState({ updatedAt: response.data.updatedAt }));
+
+      axios.put(url+"products",data,requestOptions2)
+      .then((response) => response.json())
+        .then((data) => {
+          console.log("okkk====>",data)
+          try{
+            if(data.id){
+              $("#chargement").hide()
+              alert("Ajouté avec success")
+              this.setState({ok: <Redirect to='/liste-produit'  />});
+            }else{
+              $("#chargement").hide()
+              this.setState({message:"An error occured, please try again !"})
+              $("#echecSauv").show()
+            }
+          }catch(err){
+            $("#chargement").hide()
+            this.setState({message:"An error occured, please try again !"})
+            $("#echecSauv").show()
+          }
+        });
+
+      // fetch(url+"products",requestOptions)
+      // .then(response => response.json())
+      // .then(data =>{
+      //   console.log("data login:",data)
+      //   try{
+      //     if(data.id){
+      //       $("#chargement").hide()
+      //       alert("Ajouté avec success")
+      //       this.setState({ok: <Redirect to='/liste-produit'  />});
+      //     }else{
+      //       $("#chargement").hide()
+      //       this.setState({message:"An error occured, please try again !"})
+      //       $("#echecSauv").show()
+      //     }
+      //   }catch(err){
+      //     $("#chargement").hide()
+      //     this.setState({message:"An error occured, please try again !"})
+      //     $("#echecSauv").show()
+      //   }
+      // })
+
+      // axios.patch(url+"products",data)
+      //   .then((response) => response.json())
+      //     .then((data) => {
+      //       // console.log("okkk====>",data)
+      //       try{
+      //         if(data.id){
+      //           $("#chargement").hide()
+      //           alert("Ajouté avec success")
+      //           this.setState({ok: <Redirect to='/liste-produit'  />});
+      //         }else{
+      //           $("#chargement").hide()
+      //           this.setState({message:"An error occured, please try again !"})
+      //           $("#echecSauv").show()
+      //         }
+      //       }catch(err){
+      //         $("#chargement").hide()
+      //         this.setState({message:"An error occured, please try again !"})
+      //         $("#echecSauv").show()
+      //       }
+      //     });
     }
   }
-
-
 
   handleValidate=()=>{
     if(this.state.success){
@@ -101,7 +183,6 @@ class ModifierProduit extends Component {
     }else{
       this.setState({show:false})
     }
-    
   }
 
   handleAnnuler=()=>{
@@ -140,7 +221,7 @@ class ModifierProduit extends Component {
         <div className="page-content">   {this.state.ok}
 
         <MetaTags>
-            <title>Add a new product</title>
+            <title>Change the product</title>
         </MetaTags>
         <Container fluid={true}>
             
@@ -148,7 +229,7 @@ class ModifierProduit extends Component {
 
             <Card style={{borderRadius:"25px",borderColor:"#AAD29A",borderWidth:"5px"}}>
               <CardBody>
-              <h4 className="text-center mt-2">Add a new product</h4>
+              <h4 className="text-center mt-2">Update product</h4>
               <hr/>
               <Row className="mt-4"> 
                 <Col md="12">
@@ -171,11 +252,11 @@ class ModifierProduit extends Component {
                   <label>Product type *</label> 
                   <select onChange={this.handleErrorTypeProduit} className="form-select is-invalid" aria-label="Default select example" id="type_id">
                     <option value="0" selected>Product type</option>
-                    {/* {
-                      this.state.categorie.map((element,idx) =>(
-                        <option value={element.value}>{element.label}</option>
+                    {
+                      this.state.typeproduit.map((element,idx) =>(
+                        <option value={element.name}>{element.name}</option>
                       ))
-                    } */}
+                    }
                   </select>
                   <div id="valideTypeProduit" class="invalid-feedback">
                     Please choose a product type.
@@ -187,9 +268,9 @@ class ModifierProduit extends Component {
               <Col md="6">
                 <Button style={{backgroundColor:"#aad29a", borderColor:"#aad29a",float:"right",borderRadius:"10px"}} id="initial" color="success"
 
-                  onClick={this.handleCreer}
+                  onClick={this.handleModifier}
                 >
-                  Add the product
+                  Update the product
                 </Button>
                 
                 <Button style={{float:"right",borderRadius:"10px"}} id="chargement" color="info" className="b-lg" type="button" disabled>

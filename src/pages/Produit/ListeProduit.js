@@ -42,55 +42,57 @@ class ListeProduit extends Component {
     super(props)
     this.state = {
       ok:"",
-      expertData:[],
+      produitData:[],
       expert:[],
       chargement:false,
-       
+      produits:[],
     }
-    this.handleDetail.bind(this)
+    this.handleModifier.bind(this)
   }
   componentDidMount() {
     this.handleChargerData()
   }
 
-  handleDetail=(id)=>{
-    localStorage.setItem('idexpert',id);
-    this.setState({ok: <Redirect to='/detail-expert'  />});
+  handleModifier=(id)=>{
+    localStorage.setItem('idProduit',id);
+    this.setState({ok: <Redirect to='/modifier-produit'  />});
   }
 
 
   handleChargerData=()=>{
-    var data=JSON.parse(localStorage.getItem("authAshia")).profile
+    // var data=JSON.parse(localStorage.getItem("authUser")).profile
    
-   fetch(url+"profiles/"+data.id)
+    fetch(url+"products")
       .then((response) => response.json())
-      .then((data) => {
-        this.setState({expertData:data.utilisateurs,chargement:true})
-        data.utilisateurs.filter(e=>e.fonction=="EXPERT").map((element,idx) =>{
-          var tab= {
-            nom: element.nom,
-            prenom: element.prenom,
-            email: element.email,
-            action: <a > <i onClick={this.handleDetail.bind(this.bind,element.id)} style={{color:"#5FC4E1"}} className="bx bxs-info-pencil bx-sm "/> </a>, 
+        .then((data) => {
+          // console.log("data", data)
+          this.setState({produitData:data,chargement:true})
+
+          data.map((element,idx) =>{
+            var tab= {
+              id: element.id,
+              nom: element.name,
+              date: element.dateCreated,
+              type: element.type,
+              action: <a > <i onClick={this.handleModifier.bind(this.bind,element.id)} style={{color:"#5FC4E1"}} className="bx bxs-pencil bx-sm "/> </a>, 
+            }
+            this.setState({produits:[...this.state.produits,tab]})
+          })
           }
-          this.setState({expert:[...this.state.expert,tab]})
-        })
-      
-        
-        
-       }
-       
-      );
+        );
   }
 
   handleAjoutProduit=()=>{
     this.setState({ok: <Redirect to='/ajout-produit'  />});
   }
 
+  handleAjoutTypeProduit=()=>{
+    this.setState({ok: <Redirect to='/ajout-type-produit'  />});
+  }
+
   loading = () => <Spinner animation="grow" />
 
   render() {
-
     const data = {
       columns: [
         {
@@ -124,8 +126,8 @@ class ListeProduit extends Component {
           width: 100,
         },
       ],
-       rows:_.sortBy(this.state.expert, 'created_at').reverse()
-      //rows:this.state.expert
+      //  rows:_.sortBy(this.state.produits, 'created_at').reverse()
+      rows:this.state.produits
     }
 
 
@@ -133,9 +135,8 @@ class ListeProduit extends Component {
       <React.Fragment>
         <div className="page-content"> {this.state.ok}
            
-          
           <MetaTags>
-            <title >Liste des experts</title>
+            <title >Product list</title>
           </MetaTags>
 
           <Container fluid={true}>
@@ -146,32 +147,30 @@ class ListeProduit extends Component {
               </Col>
             </Row>
 
-            
-
             <Row>
               <Col className="col-12 mt-4">
-              {/* {
-                (this.state.chargement)?
-              */}
-                <Card style={{borderRadius:"25px",borderColor:"#6A7172",borderWidth:"5px"}}>
-                  <CardBody>
-                    <CardTitle className="h4 mb-5">
-                      PRODUCTS
-                    </CardTitle>
+                {
+                  (this.state.chargement)?
+              
+                  <Card style={{borderRadius:"25px",borderColor:"#6A7172",borderWidth:"5px"}}>
+                    <CardBody>
+                      <CardTitle className="h4 mb-5">
+                        PRODUCTS
+                      </CardTitle>
 
-                    <p className="card-title-desc">
-                    </p>
-                    <Suspense fallback={this.loading()}>
-                      <MDBDataTable responsive striped bordered data={data} />
-                    </Suspense>
-                  </CardBody>
-                </Card>
-                {/* :(
-                  <div style={{marginTop:"150px",textAlign:"center"}}>
-                    <Spinner type="grow" color="secondary" />
-                 </div>
-                )
-              } */}
+                      <p className="card-title-desc">
+                      </p>
+                      <Suspense fallback={this.loading()}>
+                        <MDBDataTable responsive striped bordered data={data} />
+                      </Suspense>
+                    </CardBody>
+                  </Card>
+                :(
+                    <div style={{marginTop:"150px",textAlign:"center"}}>
+                      <Spinner type="grow" color="secondary" />
+                  </div>
+                  )
+                } 
               </Col>
             </Row>
 
@@ -181,11 +180,11 @@ class ListeProduit extends Component {
                 <Button
                   color="success"
                   className="font-16 btn-block btn float-right"
-                  onClick={this.handleAjoutProduit}
+                  onClick={this.handleAjoutTypeProduit}
                   style={{backgroundColor:"#aad29a", borderColor:"#aad29a",float:"right",borderRadius:"40px"}}
                 >
                   <i className="mdi mdi-plus-circle-outline me-1" />
-                  Ajouter un nouveau type
+                  Add a new product type
                 </Button>
               </Col>
 
@@ -197,7 +196,7 @@ class ListeProduit extends Component {
                   style={{backgroundColor:"#aad29a", borderColor:"#aad29a",float:"right",borderRadius:"40px"}}
                 >
                   <i className="mdi mdi-plus-circle-outline me-1" />
-                  Ajouter un nouveau produit
+                  Add a new product
                 </Button>
               </Col>
             </Row>

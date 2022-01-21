@@ -1,5 +1,6 @@
 
-
+## Introduction
+Basic Full-Stack test | ModelSis
 
 ## Mise en place de l'environnement
 
@@ -27,3 +28,8 @@ Installer [NodeJs](https://nodejs.org/en/download/).
 
 ## Execution
 Votre apllication va se lancer sur votre navigateur par défaut à l'adresse suivante : `http://localhost:3000/#/` 
+
+## Connexion
+Connectez vous grâce aux accès suivants :
+* **LOGIN :** bollky.nana@gmail.com
+* **MDP :** bollky.nana@gmail.com
