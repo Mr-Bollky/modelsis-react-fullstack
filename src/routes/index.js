@@ -163,11 +163,23 @@ import BlogList from "../pages/Blog/BlogList/index"
 import BlogGrid from "../pages/Blog/BlogGrid/index"
 import BlogDetails from "../pages/Blog/BlogDetails"
 
+// Produit
+import AjoutProduit from "../pages/Produit/AjoutProduit"
+import ModifierProduit from "../pages/Produit/ModifierProduit"
+import ListeProduit from "../pages/Produit/ListeProduit"
+import AjoutTypeProduit from "../pages/Produit/AjoutTypeProduit"
+
 const authProtectedRoutes = [
   { path: "/dashboard", component: Dashboard },
   { path: "/dashboard-saas", component: DashboardSaas },
   { path: "/dashboard-crypto", component: DashboardCrypto },
-  { path: "/dashboard-blog", component: DashboardBlog },
+  { path: "/dashboard-blog", component: DashboardBlog }, 
+
+  //Produit
+  { path: "/ajout-produit", component: AjoutProduit },
+  { path: "/liste-produit", component: ListeProduit },
+  { path: "/modifier-produit", component: ModifierProduit },
+  { path: "/ajout-type-produit", component: AjoutTypeProduit },
 
   //Crypto
   { path: "/crypto-wallet", component: CryptoWallet },
@@ -302,7 +314,7 @@ const authProtectedRoutes = [
   { path: "/pages-pricing", component: PagesPricing },
 
   // this route should be at the end of all other routes
-  { path: "/", exact: true, component: () => <Redirect to="/dashboard" /> },
+  { path: "/", exact: true, component: () => <Redirect to="/login" /> },
 ]
 
 const publicRoutes = [
