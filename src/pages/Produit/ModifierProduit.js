@@ -95,10 +95,6 @@ class ModifierProduit extends Component {
       headers: { 'Content-Type': 'application/json','Accept': 'application/json','Access-Control-Allow-Origin':'*'},
       body: JSON.stringify(data)
     };
-    const requestOptions2 = {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json','Accept': 'application/json','Access-Control-Allow-Origin':'*'},
-    };
 
     if(($("#nom").val()=="") || ($("#type_id option:selected").val()=="0") ){
       $("#initial").show()
