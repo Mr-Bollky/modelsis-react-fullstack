@@ -2,6 +2,9 @@
 ## Introduction
 Basic Full-Stack test | ModelSis
 
+## Stack utilisée
+| Reactootstrap | Html | css | Javascript | Bootstrap |
+
 ## Mise en place de l'environnement
 
 Installer [NodeJs](https://nodejs.org/en/download/).  
