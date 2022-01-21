@@ -99,19 +99,19 @@ class Layout extends Component {
         </div>
 
         <div id="layout-wrapper">
-          {/* <Header
+          <Header
             toggleMenuCallback={this.toggleMenuCallback}
             toggleRightSidebar={this.toggleRightSidebar}
-          /> */}
-          {/* <Sidebar
+          />
+          <Sidebar
             theme={this.props.leftSideBarTheme}
             type={this.props.leftSideBarType}
             isMobile={this.state.isMobile}
-          /> */}
+          />
           <div className="main-content">{this.props.children}</div>
-          {/* <Footer /> */}
+          <Footer />
         </div>
-        {/* <Rightbar /> */}
+        <Rightbar />
       </React.Fragment>
     )
   }
